@@ -1,0 +1,366 @@
+<div class="container-fluid">
+<br>
+    <div class="shang mb-2 row">
+	   <button type="button" class="btn btn-info bth-lg ml-3">招聘中</button>
+    	<button type="button" class="btn btn-info bth-lg ml-2 mr-5">招聘完结</button>
+    	<button id="button_HY" type="button" class="btn btn-info bth-lg">还原</button>
+	   
+	    <div class="col-6"></div>
+	    <div class=" ">
+	    	<div >
+	    		<button type="button" id="btn_add" class="btn btn-warning ml-4 "><i class="iconfont icon-icon-mark-blue"></i>    发布职位</button>
+	    		<button type="button" class="btn btn-info ml-4"><i class="iconfont icon-icon-mark-blue"></i>    导入职位</button>
+	    	</div>
+	    </div>
+	    <br>
+    </div>
+ 	<div class="zhong mb-2 row ml-1">
+
+ 		<select name="" id="search_ZY" class="btn btn-outline-success dropdown-toggle " >
+ 			<option  style="display:none;">招聘职位</option>
+ 		</select>
+ 		<select name="" id="search_ZP" class="btn btn-outline-success dropdown-toggle ml-2 " >
+ 			<option  style="display:none;">招聘标题</option>
+ 		</select>
+ 		
+ 		<div class="col-5 text-right px-0 mr-2 "><button type="button" class="btn btn-outline-success dropdown-toggle ">关键字
+ 		</button></div>
+ 		<!-- 搜索 -->
+ 		
+ 		<div class="ss row col-3" >
+			<input type="text" class="form-control" id="filtertext" placeholder="请输入...">
+		</div>
+		<div class="">
+			<button type="button" id="search" class="btn btn-primary" >搜索</button>
+		</div>
+		  
+		
+		<!-- 搜索结束 -->
+ 	</div>
+ 	
+ 	<div class="xia">
+ 		<table  class="table table-bordered table-sm table-hover" id="customer_tbl">
+				<thead class="text-center">
+					<tr>
+						<td width="60" >编号</td>
+						<td>招聘标题</td>
+						<td>发布人</td>
+						<td>联系方式</td>
+						<td>工作</td>
+						<td>需要人数</td>
+						<td>工资</td>
+						<td>福利</td>
+						<td>详情</td>
+						<td width="150">操作</td>
+					</tr>
+				</thead>
+				<tbody id="customer_tbody" "> </tbody>
+		</table>
+ 	</div>
+ 	
+</div>
+
+
+
+<script>
+	
+var baseURL = "http://203.195.246.58:7777"
+		function closeModal(){
+			//编写代码表单重置
+			$(this).parents(".modal").modal("hide");
+		}
+		// 加载数据
+		function reloadData(){
+			var url = baseURL+"/Employment/findAll"
+			$.get(url,function(result){
+				if(result.status === 200){
+					$("#customer_tbl>tbody").empty();
+					result.data.forEach(function(item){
+						$(`<tr>
+						<td class="text-center"><input type="checkbox" value="`+item.id+`"></td>
+						<td class="text-center">`+item.title+`</td>
+						<td class="text-center">`+item.contactName+`</td>
+						<td class="text-center">`+item.contactPhone+`</td> 
+						<td class="text-center">`+item.job+`</td>
+						<td class="text-center">`+item.num+`</td>
+						<td class="text-center">`+item.salary+`</td>
+						<td class="text-center">`+item.welfare+`</td>
+						<td class="text-center">
+							<a href="javascript:void(0)" class="text-danger">查看</a>
+						</td>
+						<td class="text-center">
+							<a href="javascript:void(0)" class="btn btn_del btn-sm">删除</a>
+							<a href="javascript:void(0)" class="btn btn-upd btn-sm">修改</a>
+						</td>
+					</tr>`).appendTo("#customer_tbl>tbody");
+					});
+				} else {
+					alert("服务接口出错！");
+				}
+			});
+		}		
+		//  还原按钮事件
+			$("#button_HY").click(function(){
+				reloadData();
+			})
+
+//---------------------------------------下拉菜单职业类型、招聘标题---------------------------------------------
+		
+		function searchBusinessZY (){
+			var url = baseURL+"/Employment/findAll";
+			$.get(url,function(result){
+				$("#search_ZY").empty();
+				$("#search_ZY").append($(`
+					<option  style="display:none;">职业类型</option>	
+					`))
+				$("#search_ZP").empty();
+				$("#search_ZP").append($(`
+					<option  style="display:none;">招聘标题</option>	
+					`))
+				result.data.forEach(function(item){
+					$("#search_ZY").append(`<option value="`+item.job+`">`+item.job+`</option>`)
+					$("#search_ZP").append(`<option value="`+item.job+`">`+item.job+`</option>`)
+
+				})
+			})
+		}
+		searchBusinessZY();
+
+		//职业类型筛选
+		$("#search_ZY").on("click","option",function(){
+			var job = $(this).val();
+			var url = baseURL+"/Employment/findByJob"
+			var data = {
+				job:job
+			};
+			$.get(url,data,function(result){
+				//将数据清空
+				$("#customer_tbl > #customer_tbody").empty();
+				result.data.forEach(function(item){
+					$(`<tr>
+						<td class="text-center"><input type="checkbox" value="`+item.id+`"></td>
+						<td class="text-center">`+item.title+`</td>
+						<td class="text-center">`+item.contactName+`</td>
+						<td class="text-center">`+item.contactPhone+`</td> 
+						<td class="text-center">`+item.job+`</td>
+						<td class="text-center">`+item.num+`</td>
+						<td class="text-center">`+item.salary+`</td>
+						<td class="text-center">`+item.welfare+`</td>
+						<td class="text-center">
+							<a href="javascript:void(0)" class="text-danger">查看</a>
+						</td>
+						<td class="text-center">
+							<a href="javascript:void(0)" class="btn btn_del btn-sm">删除</a>
+							<a href="javascript:void(0)" class="btn btn-upd btn-sm">修改</a>
+						</td>
+					</tr>`).appendTo("#customer_tbl >#customer_tbody");
+				})
+			})
+		})
+
+		//职业类型筛选结束
+		//招聘标题筛选
+		$("#search_ZP").on("click","option",function(){
+			var title = $(this).val();
+			var url =baseURL+"/Employment/findByTitle"
+			var data = {
+				title:title
+			};
+			$.get(url,data,function(result){
+				$("#customer_tbl > #customer_tbody").empty();
+				result.data.forEach(function(item){
+					$(`<tr>
+						<td class="text-center"><input type="checkbox" value="`+item.id+`"></td>
+						<td class="text-center">`+item.title+`</td>
+						<td class="text-center">`+item.contactName+`</td>
+						<td class="text-center">`+item.contactPhone+`</td> 
+						<td class="text-center">`+item.job+`</td>
+						<td class="text-center">`+item.num+`</td>
+						<td class="text-center">`+item.salary+`</td>
+						<td class="text-center">`+item.welfare+`</td>
+						<td class="text-center">
+							<a href="javascript:void(0)" class="text-danger">查看</a>
+						</td>
+						<td class="text-center">
+							<a href="javascript:void(0)" class="btn btn_del btn-sm">删除</a>
+							<a href="javascript:void(0)" class="btn btn-upd btn-sm">修改</a>
+						</td>
+					</tr>`).appendTo("#customer_tbl > #customer_tbody");
+				})
+			})
+		})
+
+		//招聘标题筛选结束
+		//搜索
+		function searchBusinessID(){
+			var url = baseURL+"/Business/findAll"
+			$.get(url,function(result){
+				//$("#search_ID").empty();
+
+				result.data.forEach(function(item){
+					$("#search_ID").append(`<option value="`+item.id+`">`+item.id+`</option>`)
+				})
+			})
+		}
+		// 保存或更新顾客信息
+		function submitCustomer(){s
+			// 1. 获取用户名手机号密码
+			var id = $("#customer_form input[name=id]").val();
+			var	title = $("#customer_form input[name=title]").val();
+			var contactName = $("#customer_form input[name=contactName]").val();
+			var contactPhone = $("#customer_form input[name=contactPhone]").val();
+			var job = $("#customer_form input[name=job]").val();
+			var num = $("#customer_form input[name=num]").val();
+			var salary = $("#customer_form input[name=salary]").val();
+			var welfare = $("#customer_form input[name=welfare]").val();
+			var description = $("#customer_form input[name=description]").val();
+			// 2. 与后台交互	
+			var url = baseURL+"/Employment/saveOrUpdate"
+			var data;
+			if(id){
+				//修改
+				data = {
+					id:id,
+					title:title,
+					contactName:contactName,
+					contactPhone:contactPhone,
+					job:job,
+					num:num,
+					salary:salary,
+					welfare:welfare,
+					description:description
+				}
+			} else {
+				//添加
+				data = {
+					title:title,
+					contactName:contactName,
+					contactPhone:contactPhone,
+					job:job,
+					num:num,
+					salary:salary,
+					welfare:welfare,
+					description:description
+				}
+			} 
+			$.post(url,data,function(result){
+				if(result.status === 200){
+					$("#ZPModal").modal("hide");
+					reloadData();
+					alert("保存成功")
+				} else {
+					alert("接口异常");
+				}
+			});
+			// 3. 关闭模态框，刷新列表
+		}
+
+			
+
+
+// 删除/修改功能
+			$(function(){
+				reloadData();
+				searchBusinessID();
+				// 2. 为添加按钮绑定事件
+			$("#btn_add").click(function(){
+			$("#ZPModal").modal("show");
+						}); 
+						// 3. 监听模态框的关闭
+			$('#ZPModal').on('hidden.bs.modal', function (e) {
+			$(this).find("form")[0].reset();
+					})
+	// 为批量删除绑定事件处理函数
+		// 为批量删除绑定事件处理函数
+	/*$("#btn_bath_del").click(function(){
+		var ids = $("input[type=checkbox]:checked").map(function(index,item){
+			return $(item).val();
+		}).toArray();
+		var url = baseURL+"/customer/batchDelete"
+		var data ="";
+		// var ids = [1,2,3]; => ids=1&ids=2&id=3
+		for(var index in ids){
+			var id = ids[index];
+			if(index == 0){
+				data += "ids="+id
+			} else {
+				data += "&ids="+id
+			}
+		}
+		$.post(url,data,function(result){
+			if(result.status ==200){
+				alert("删除成功");
+				reloadData();
+			} else {
+				alert(result.message);
+			}
+		});
+	})*/
+
+		//工作时间添加时间戳，添加现在时间
+		document.querySelector("#input_publishTime").addEventListener("focus",function(){
+			this.value = new Date().toString();
+		})
+		//搜索
+		$ (function(){
+			$("#search").click(function(){
+				var searchtxt = $('#filtertext').val();
+				console.log(searchtxt);
+				$("#customer_tbl #customer_tbody tr").hide().filter(":contains('"+searchtxt+"')").show();
+			})
+		})
+		//搜索结束
+		// 为删除/修改按钮绑定事件
+
+		$("#customer_tbl > #customer_tbody").on("click","a",function(event){
+			switch(this.className){
+				case "btn btn_del btn-sm":
+					var url = baseURL+"/Employment/deleteById";
+					//获取Id
+					var id = $(this).parents("tr").find("input").val();
+					var data = {
+						id:id
+					}
+					console.log(data);		
+					$.post(url,data,function(result){
+						if(result.status === 200){
+							alert(result.message);
+							reloadData();
+						}else{
+							alert(result.message);
+						}						
+					});
+					break;
+					//修改
+				case "btn btn-upd btn-sm":
+					//1、弹出模态框
+						$('#ZPModal').modal('show');
+					// 2. 将当前行的信息放人模态框
+					var id = $(this).parents('tr').find('input').val();
+					var title = $(this).parents('tr').find('td:nth-child(2)').text();
+					var contactName = $(this).parents('tr').find('td:nth-child(3)').text();
+					var contactPhone = $(this).parents('tr').find('td:nth-child(4)').text();
+					var job = $(this).parents('tr').find('td:nth-child(5)').text();
+					var num = $(this).parents('tr').find('td:nth-child(6)').text();
+					var varsalary = $(this).parents('tr').find('td:nth-child(7)').text();
+					var welfare = $(this).parents('tr').find('td:nth-child(8)').text();
+					var description = $(this).parents('tr').find('td:nth-child(9)').text();
+					//将表格中的名称，数量和类型的值添加到模态框中
+					$("#customer_form input[name=id]").val(id);
+					$("#customer_form input[name=title]").val(title);
+					$("#customer_form input[name=contactName]").val(contactName);
+					$("#customer_form input[name=contactPhone]").val(contactPhone);
+					$("#customer_form input[name=job ]").val(job);
+					$("#customer_form input[name=num]").val(num);
+					$("#customer_form input[name=salary]").val(salary);
+					$("#customer_form input[name=welfare]").val(welfare);
+					$("#customer_form input[name=description]").val(description);
+					break;
+			}
+	});
+});
+
+
+
+	
+</script>

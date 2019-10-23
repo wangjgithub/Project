@@ -1,0 +1,485 @@
+
+<style>
+	.zhong .btns{
+		float: right;
+	}
+	.zhong .ss{
+		float: right;
+		width: 30%;
+	}
+	.zhong .ss #filtertext{
+		float: left;
+		width: 80%
+	}
+</style>
+<div class="container-fluid">
+<br>
+    <div class="shang mb-2 ">
+    	<button type="button" class="btn btn-info bth-lg">商家列表</button>
+    	<button id="button_HY" type="button" class="btn btn-info bth-lg">还原</button>
+
+    	<br>
+    </div>
+ 	<div class="zhong mb-2">
+ 		<select name="" id="search_ID" class="btn btn-outline-success dropdown-toggle " >
+ 			<option  style="display:none;">ID</option>
+ 		</select>
+ 		<select name="" id="search_WZ" class="btn btn-outline-success dropdown-toggle " >
+ 			<option  style="display:none;">位置</option>
+ 		</select>
+ 		<select name="" id="search_HY" class="btn btn-outline-success dropdown-toggle " >
+ 			<option  style="display:none;">行业</option>
+ 		</select>
+ 		<select name="" id="search_GM" class="btn btn-outline-success dropdown-toggle " >
+ 			<option  style="display:none;">规模</option>
+ 		</select>
+ 		<div class="btns mb-2" style="display:inline-block;">
+			<button class="btn btn-primary" id="btn_add">添加</button>
+			<button class="btn btn-danger" id="btn_bath_del">批量删除</button>
+		</div>
+ 		<!-- 搜索 -->
+ 		<div class="ss" >
+						<tr>
+			<input type="text " class="form-control " id="filtertext" placeholder="请输入...">
+			<input type="button" id="search" class="input-group-text " value="搜索" >
+			</tr>
+		<!-- 搜索结束 -->
+		</div>
+ 	</div>
+ 	
+	
+	
+ 	<div class="xia">
+ 		<table class="table table-bordered table-sm table-hover" id="customer_tbl">
+				<thead class="text-center">
+					<tr>
+						<td width="60" >编号</td>
+						<td>企业名称</td>
+						<td>联系人</td>
+						<td>联系方式</td>
+						<td>行业</td>
+						<td>所在地</td>
+						<td>公司规模</td>
+						<td>详情</td>
+						<td width="150">操作</td>
+					</tr>
+				</thead>
+				<tbody id="customer_tbody"> </tbody>
+		</table>
+		<ul class="menu btn-toolbar" role="toolbar" aria-label="...">
+
+		</ul>
+ 	</div>
+ 	
+</div>
+
+
+
+<script>
+	//*******************************************分页**********************************************************
+	//获取分页列表函数
+function getPage(cpage,sum_page){
+            var list='';//数字列表
+		 	var num=2;//列表前后有几个数字
+		 	var num_page=cpage;//当前页码
+            var new_num;//动态页面
+		 	
+        //当前数字之前
+		 for(i=num;i>=1;i--){
+		 		new_num=num_page-i;
+		 		if(new_num>=1){
+		 		list+="<li class=' page-item disabled btn-group'><a class='page-link' href='#' onclick='reloadData("+new_num+")'>"+ new_num +"</a></li>";
+		 	    }
+		 }
+		 	//当前数字
+		 	list+="<li class='btn-group page-link'>"+cpage+"</li>";
+		 	//当前数字之后
+		 	for(i=1;i<=num;i++){
+		 		new_num=num_page+i;
+		 		if(new_num<=sum_page){
+		 		list+="<li class='  page-item btn-group'><a class='page-link' href='#' onclick='reloadData("+new_num+")'>"+new_num +"</a></li>";
+		 		}else{
+		 			break;
+		 		}
+		 	}
+            $('.menu').empty();
+            $('.menu').append(list);
+        }
+
+        ////////////////////////////////////////////////
+
+var baseURL = "http://203.195.246.58:7777"
+		
+		// 加载数据
+		function reloadData(page){
+			var url = baseURL+"/Business/findAll"
+			$.get(url,function(result){
+				if(result.status === 200){
+				    var data = result.data;
+				    var total = data.length;//总个数
+				    var nums=7;//一页显示多少条记录
+				    var sum_page;//总页数
+				    var cpage=1;//当前在多少页
+				    
+				    //计算总页码
+				    if (total%nums==0){
+						sum_page=parseInt(total/nums);
+					}else {
+						sum_page=parseInt(total/nums+1);
+				    }
+				    
+				    var newdata=[];//新数据
+				    cpage=page;//改变当前页面
+				    var i;//当前数据索引
+				    if(cpage==1)
+				        i=0;
+				    else
+				        i=(cpage-1)*nums;//公式：计算当前的索引
+				    for(j=0;j<=6;j++){//循环10次调取数据
+				        if(data[i+j]==undefined)
+				        break;
+				        newdata[j] = data[i+j];
+				    }
+				    //展示数据
+					$("#customer_tbl>#customer_tbody").empty();
+					newdata.forEach(function(item){
+						$(`<tr>
+						<td class="text-center"><input type="checkbox" value="`+item.id+`"></td>
+						<td class="text-center">`+item.name+`</td>
+						<td class="text-center">`+item.contactName+`</td>
+						<td class="text-center">`+item.contactPhone+`</td> 
+						<td class="text-center">`+item.industry+`</td>
+						<td class="text-center">`+item.location+`</td>
+						<td class="text-center">`+item.scale+`</td>
+						<td class="text-center">`+item.description+`</td>
+						<td class="text-center">
+							<a href="javascript:void(0)" class="btn btn_del btn-sm">删除</a>
+							<a href="javascript:void(0)" class="btn btn-upd btn-sm">修改</a>
+						</td>
+					</tr>`).appendTo("#customer_tbl>#customer_tbody");
+					});
+					  getPage(cpage,sum_page); 
+				} else {
+					alert("服务接口出错！");
+				}
+			});
+		}
+			//  还原按钮事件
+			$("#button_HY").click(function(){
+				reloadData();
+			})
+
+//-----------------------------------根据ID查询--------------------------------------------------------
+		function searchBusinessID(){
+			var url = baseURL+"/Business/findAll"
+			$.get(url,function(result){
+				//清空数据
+				$("#search_ID").empty();
+				//追加数据(防止ID被删除)
+				$("#search_ID").append($(`
+					<option style="display:none;">ID</option>
+					`));			
+				result.data.forEach(function(item){
+						//后台ID值追加到二级下拉框中
+					$("#search_ID").append(`<option value="`+item.id+`">`+item.id+`</option>`)				
+				})
+			})
+		}
+		searchBusinessID();
+
+		$("#search_ID").on("click","option", function(){
+			//将生成的ID赋值给id
+			var id = $(this).val();
+			var url = baseURL+"/Business/findById";
+			var data = {
+				id:id
+			};
+			
+			$.get(url,data ,function(result){
+				//将原数据清空
+				$("#customer_tbl > #customer_tbody").empty();
+				var item = 	result.data;
+				$(`<tr>
+						<td class="text-center"><input type="checkbox" value="`+item.id+`"></td>
+						<td class="text-center">`+item.name+`</td>
+						<td class="text-center">`+item.contactName+`</td>
+						<td class="text-center">`+item.contactPhone+`</td> 
+						<td class="text-center">`+item.industry+`</td>
+						<td class="text-center">`+item.location+`</td>
+						<td class="text-center">`+item.scale+`</td>
+						<td class="text-center">`+item.description+`</td>
+						<td class="text-center">
+							<a href="javascript:void(0)" class="btn btn_del btn-sm">删除</a>
+							<a href="javascript:void(0)" class="btn btn-upd btn-sm">修改</a>
+						</td>
+					</tr>`).appendTo("#customer_tbl>#customer_tbody");
+
+			})
+		})
+
+//----------------------------下拉菜单位置、行业、规模清空显示-----------------------------------------------
+		function searchBusinessHY(){
+			var url = baseURL+"/Business/findAll"
+			$.get(url,function(result){
+				$("#search_HY").empty();
+				$("#search_HY").append($(`
+					<option style="display:none;">行业</option>
+					`));
+				$("#search_WZ").empty();
+				$("#search_WZ").append($(`
+					<option  style="display:none;">位置</option>
+					`));
+				$("#search_GM").empty();
+				$("#search_GM").append($(`
+					<option  style="display:none;">规模</option>
+					`));
+				result.data.forEach(function(item){
+					$("#search_HY").append(`<option value="`+item.industry+`">`+item.industry+`</option>`)
+					$("#search_WZ").append(`<option value="`+item.location+`">`+item.location+`</option>`)
+					$("#search_GM").append(`<option value="`+item.scale+`">`+item.scale+`</option>`)
+				})
+			})
+		}
+		searchBusinessHY();
+
+		//位置查询筛选
+
+		$("#search_WZ").on("click","option" ,function(){
+			var location = $(this).val();
+			var url = baseURL+"/Business/findByLocation"
+			var data = {
+				location:location
+			};
+			$.get(url,data ,function(result){
+				//将原数据清空
+				$("#customer_tbl > #customer_tbody").empty();
+				result.data.forEach(function(item){
+					$(`<tr>
+						<td class="text-center"><input type="checkbox" value="`+item.id+`"></td>
+						<td class="text-center">`+item.name+`</td>
+						<td class="text-center">`+item.contactName+`</td>
+						<td class="text-center">`+item.contactPhone+`</td> 
+						<td class="text-center">`+item.industry+`</td>
+						<td class="text-center">`+item.location+`</td>
+						<td class="text-center">`+item.scale+`</td>
+						<td class="text-center">`+item.description+`</td>
+						<td class="text-center">
+							<a href="javascript:void(0)" class="btn btn_del btn-sm">删除</a>
+							<a href="javascript:void(0)" class="btn btn-upd btn-sm">修改</a>
+						</td>
+					</tr>`).appendTo("#customer_tbl > #customer_tbody");
+				})
+			})
+		})
+			//位置查询筛选，结束。
+
+			//行业传筛选
+			$("#search_HY").on("click","option",function(){
+				var industry = $(this).val();
+				var url = baseURL+"/Business/findByIndustry"
+				var data = {
+					industry:industry
+				};
+				$.get(url,data ,function(result){
+					$("#customer_tbl > #customer_tbody").empty();
+					result.data.forEach(function(item){
+						$(`<tr>
+						<td class="text-center"><input type="checkbox" value="`+item.id+`"></td>
+						<td class="text-center">`+item.name+`</td>
+						<td class="text-center">`+item.contactName+`</td>
+						<td class="text-center">`+item.contactPhone+`</td> 
+						<td class="text-center">`+item.industry+`</td>
+						<td class="text-center">`+item.location+`</td>
+						<td class="text-center">`+item.scale+`</td>
+						<td class="text-center">`+item.description+`</td>
+						<td class="text-center">
+							<a href="javascript:void(0)" class="btn btn_del btn-sm">删除</a>
+							<a href="javascript:void(0)" class="btn btn-upd btn-sm">修改</a>
+						</td>
+					</tr>`).appendTo("#customer_tbl > #customer_tbody");
+					})
+				})
+
+			})
+			//行业筛选结束
+
+			//规模筛选
+			$("#search_GM").on("click","option",function(){
+				var scale = $(this).val();
+				var url = baseURL+"/Business/findByScale"
+				var data = {
+					scale:scale
+				};
+				$.get(url,data ,function(result){
+					$("#customer_tbl > #customer_tbody").empty();
+					result.data.forEach(function(item){
+						$(`<tr>
+						<td class="text-center"><input type="checkbox" value="`+item.id+`"></td>
+						<td class="text-center">`+item.name+`</td>
+						<td class="text-center">`+item.contactName+`</td>
+						<td class="text-center">`+item.contactPhone+`</td> 
+						<td class="text-center">`+item.industry+`</td>
+						<td class="text-center">`+item.location+`</td>
+						<td class="text-center">`+item.scale+`</td>
+						<td class="text-center">`+item.description+`</td>
+						<td class="text-center">
+							<a href="javascript:void(0)" class="btn btn_del btn-sm">删除</a>
+							<a href="javascript:void(0)" class="btn btn-upd btn-sm">修改</a>
+						</td>
+					</tr>`).appendTo("#customer_tbl > #customer_tbody");
+					})
+				})
+
+			})
+		// 保存或更新顾客信息
+		function submitCustomer(){
+			// 1. 获取用户名手机号密码
+			var id = $("#customer_form input[name=id]").val();
+			var	name = $("#customer_form input[name=name]").val();
+			var contactName = $("#customer_form input[name=contactName]").val();
+			var contactPhone = $("#customer_form input[name=contactPhone]").val();
+			var industry = $("#customer_form input[name=industry]").val();
+			var location = $("#customer_form input[name=location]").val();
+			var scale = $("#customer_form input[name=scale]").val();
+			var description = $("#customer_form input[name=description]").val();
+			// 2. 与后台交互	
+			var url = baseURL+"/Business/saveOrUpdate"
+			var data;
+			
+			if(id){
+				//修改
+				data = {
+					id:id,
+					name:name,
+					contactName:contactName,
+					contactPhone:contactPhone,
+					industry:industry,
+					location:location,
+					scale:scale,
+					description:description
+				}
+			} else {
+				//添加
+				data = {
+					name:name,
+					contactName:contactName,
+					contactPhone:contactPhone,
+					industry:industry,
+					location:location,
+					scale:scale,
+					description:description
+				}
+			} 
+			$.post(url,data,function(result){
+				if(result.status === 200){
+					$("#SJModal").modal("hide");
+					reloadData();
+					searchBusinessID();
+					searchBusinessHY();
+					alert("保存成功")
+				} else {
+					alert("接口异常");
+				}
+			});
+			// 3. 关闭模态框，刷新列表
+		}
+		
+			$(function(){
+				reloadData(1);
+		
+				// 2. 为添加按钮绑定事件
+			$("#btn_add").click(function(){
+			$("#SJModal").modal("show");
+						}); 
+						// 3. 监听模态框的关闭
+			$('#SJModal').on('hidden.bs.modal', function (e) {
+			$(this).find("form")[0].reset();
+					})
+	// 为批量删除绑定事件处理函数
+		// 为批量删除绑定事件处理函数
+	/*$("#btn_bath_del").click(function(){
+		var ids = $("input[type=checkbox]:checked").map(function(index,item){
+			return $(item).val();
+		}).toArray();
+		var url = baseURL+"/customer/batchDelete"
+		var data ="";
+		// var ids = [1,2,3]; => ids=1&ids=2&id=3
+		for(var index in ids){
+			var id = ids[index];
+			if(index == 0){
+				data += "ids="+id
+			} else {
+				data += "&ids="+id
+			}
+		}
+		$.post(url,data,function(result){
+			if(result.status ==200){
+				alert("删除成功");
+				reloadData();
+			} else {
+				alert(result.message);
+			}
+		});
+	})*/
+		//搜索
+		$ (function(){
+			$("#search").click(function(){
+				var searchtxt = $('#filtertext').val();
+				
+				$("table tbody tr").hide().filter(":contains('"+searchtxt+"')").show();
+			})
+		})
+		//搜索结束
+		// 为删除/修改按钮绑定事件
+
+		$("#customer_tbl > tbody").on("click","a",function(event){
+			switch(this.className){
+				case "btn btn_del btn-sm":
+					var url = baseURL+"/Business/deleteById";
+					//获取Id
+					var id = $(this).parents("tr").find("input").val();
+					var data = {
+						id:id
+					}
+						
+					$.post(url,data,function(result){
+						if(result.status === 200){
+							alert(result.message);
+							reloadData();
+						}else{
+							alert(result.message);
+						}						
+					});
+					break;
+					//修改
+				case "btn btn-upd btn-sm":
+					//1、弹出模态框
+						$('#SJModal').modal('show');
+					// 2. 将当前行的信息放人模态框
+					var id = $(this).parents('tr').find('input').val();
+					var name = $(this).parents('tr').find('td:nth-child(2)').text();
+					var contactName = $(this).parents('tr').find('td:nth-child(3)').text();
+					var contactPhone = $(this).parents('tr').find('td:nth-child(4)').text();
+					var industry = $(this).parents('tr').find('td:nth-child(5)').text();
+					var location = $(this).parents('tr').find('td:nth-child(6)').text();
+					var scale = $(this).parents('tr').find('td:nth-child(7)').text();
+					var description = $(this).parents('tr').find('td:nth-child(8)').text();
+					//将表格中的名称，数量和类型的值添加到模态框中
+					$("#customer_form input[name=id]").val(id);
+					$("#customer_form input[name=name]").val(name);
+					$("#customer_form input[name=contactName]").val(contactName);
+					$("#customer_form input[name=contactPhone]").val(contactPhone);
+					$("#customer_form input[name=industry ]").val(industry);
+					$("#customer_form input[name=location]").val(location);
+					$("#customer_form input[name=scale]").val(scale);
+					$("#customer_form input[name=description]").val(description);
+					break;
+			}
+	});
+});
+
+
+
+	
+</script>
+

@@ -1,0 +1,126 @@
+<style>
+	.zhong .btns{
+		float: right;
+	}
+	.zhong .ss{
+		float: right;
+		width: 30%;
+	}
+	.zhong .ss #filtertext{
+		float: left;
+		width: 80%
+	}
+</style>
+<div class="container-fluid">
+<br>
+    <div class="shang mb-2 ">
+    	<button type="button" class="btn btn-info bth-lg">求职列表</button>
+    	<button id="button_HY" type="button" class="btn btn-info bth-lg">还原</button>
+    	<br>
+    </div>
+ 	<div class="zhong mb-2">
+ 		<button class="btn btn-primary">待联系</button>
+ 		<div class="btns mb-2 " style="display:inline-block;">
+ 				
+			<button class="btn btn-primary" id="btn_add">添加</button>
+			<button class="btn btn-danger" id="btn_bath_del">批量删除</button>
+		</div>
+ 		<!-- 搜索 -->
+ 		<div class="ss" >
+						<tr>
+			<input type="text " class="form-control " id="filtertext" placeholder="请输入...">
+			<input type="button" id="search" class="input-group-text " value="搜索" >
+			</tr>
+		<!-- 搜索结束 -->
+		</div>
+	</div>
+ 	<div class="xia">
+ 		<table class="table table-bordered table-sm table-hover" id="customer_tbl">
+				<thead class="text-center">
+					<tr>
+						<td width="60" >编号</td>
+						<td>求职人</td>
+						<td>联系方式</td>
+						<td>求职岗位</td>
+						<td>简历</td>
+						<td>申请时间</td>
+					</tr>
+				</thead>
+				<tbody id="customer_tbody"> </tbody>
+		</table>
+ 	</div>
+</div>
+
+
+<!-- 模态框 -->
+<div class="modal fade " id="YH_Modal">
+    <!-- 模态框 -->
+  <div class="modal-dialog modal-lg" role="document">
+      <!-- 模态框的内容 -->
+    <div class="modal-content">
+        <!-- 标题，头部 -->
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">添加用户</h5>
+            <button type="button" class="close" onclick="YH_Modal.call(this)" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+        <!-- begin -->
+        <form id="customer_form">
+          <div class="form-group row">
+            <input type="hidden" name="id" value="">
+          </div>
+          <div class="form-group row">
+            <label for="input_username" class="col-sm-2 text-right">用户名</label>
+            <div class="col-sm-10">
+              <input id="input_username" class="form-control" type="text" name="username" placeholder="请输入用户名"/>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="input_telephone" class="col-sm-2 text-right">手机号</label>
+            <div class="col-sm-10">
+              <input id="input_telephone" class="form-control " type="text" name="telephone" placeholder="请输入用户名手机号"/> 
+            </div>
+          </div>
+        </form>
+      <!-- end -->
+      </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="YH_Modal.call(this)">关闭</button>
+            <button type="button" class="btn btn-primary" onclick="submitCustomer()">保存</button>
+
+        </div>
+    </div>
+  </div>
+</div>
+<!-- / Modal结束 -->  
+<script>
+	var baseURL = "http://203.195.246.58:7777"
+		// 加载数据
+		function reloadData(){
+			var url = baseURL+"/EmploymentJobhunter/findAll"
+			$.get(url,function(result){
+				if(result.status === 200){
+					$("#customer_tbl > #customer_tbody").empty();
+					result.data.forEach(function(item){
+						$(`<tr>
+						<td class="text-center"><input type="checkbox" value="`+item.id+`"></td>
+						<td class="text-center">`+item.jobhunterId+`</td>
+						<td class="text-center">`+item.remark+`</td>
+						<td class="text-center">`+item.employmentId+`</td> 
+						<td class="text-center">
+							<a href="javascript:void(0)" class="btn btn_del btn-sm">查看</a>
+						</td>
+						<td class="text-center">`+item.askTime+`</td>
+					</tr>`).appendTo("#customer_tbl > #customer_tbody");
+					});
+				} else {
+					alert("服务接口出错！");
+				}
+			});
+		}
+		reloadData()；	
+</script>
+	
+

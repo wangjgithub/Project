@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>招聘网站后台</title>
+  <link rel="stylesheet" href="./layui/css/layui.css">
+  <link rel="stylesheet" type="text/css" href="css/index.css">
+  <link href="https://at.alicdn.com/t/font_1390661_iyvl6bgla3e.css" rel="stylesheet">
+	<link href="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+	<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <script src="./js/index.js"></script>
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+  <div class="layui-header">
+    <div class="layui-logo"></div>
+    <!-- 头部区域（可配合layui已有的水平导航） -->
+   <!--  <ul class="layui-nav layui-layout-left">
+      <li class="layui-nav-item"><a href="">控制台</a></li>
+      <li class="layui-nav-item"><a href="">商品管理</a></li>
+      <li class="layui-nav-item"><a href="">用户</a></li>
+      <li class="layui-nav-item">
+        <a href="javascript:;">其它系统</a>
+        <dl class="layui-nav-child">
+          <dd><a href="">邮件管理</a></dd>
+          <dd><a href="">消息管理</a></dd>
+          <dd><a href="">授权管理</a></dd>
+        </dl>
+      </li>
+    </ul> -->
+    <div>
+      <!-- <img src="images/ww.png" style="position:absolute;left:83%;top:13%;"> -->
+    </div>
+    <ul class="layui-nav layui-layout-right">
+      <li class="layui-nav-item">
+        <a href="javascript:;">
+          <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
+          John Doe
+        </a>
+        <dl class="layui-nav-child">
+          <dd><a href="">退出</a></dd>
+          <!-- <dd><a href="">安全设置</a></dd> -->
+        </dl>
+      </li>
+      <!-- <li class="layui-nav-item"><a href="">退了</a></li> -->
+    </ul>
+  </div>
+  
+  <div class="layui-side layui-bg-black">
+    <div class="layui-side-scroll">
+      <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+      <ul class="layui-nav layui-nav-tree" id="nav"  lay-filter="test">
+        <!-- <li class="layui-nav-item layui-nav-itemed">
+          <a class="" href="javascript:;">所有商品</a>
+          <dl class="layui-nav-child">
+            <dd><a href="javascript:;">列表一</a></dd>
+            <dd><a href="javascript:;">列表二</a></dd>
+            <dd><a href="javascript:;">列表三</a></dd>
+            <dd><a href="">超链接</a></dd>
+          </dl>
+        </li>
+        <li class="layui-nav-item">
+          <a href="javascript:;">解决方案</a>
+          <dl class="layui-nav-child">
+            <dd><a href="javascript:;">列表一</a></dd>
+            <dd><a href="javascript:;">列表二</a></dd>
+            <dd><a href="">超链接</a></dd>
+          </dl>
+        </li> -->
+        <li class="layui-nav-item "><a href="javascript:void(0);"> <i class="layui-icon">&#xe68e;</i>首页</a></li>
+        <li class="layui-nav-item " url="./pages/shangjia.html"><a href="javascript:void(0)"><i class="layui-icon">&#xe66f;</i>商家管理</a></li>
+        <li class="layui-nav-item " url="./pages/zhaopin.html"><a href="javascript:void(0)"><i class="layui-icon">&#xe655;</i>招聘管理</a></li>
+        <li class="layui-nav-item " url="./pages/yonghu.html"><a href="javascript:void(0)"><i class="layui-icon">&#xe770;</i>用户管理</a></li>
+        <li class="layui-nav-item "><a href="javascript:void(0)"><i class="layui-icon">&#xe620;</i>模块管理</a></li>
+        <li class="layui-nav-item "><a href="javascript:void(0)"><i class="layui-icon">&#xe606;</i>客服管理</a></li>
+        <li class="layui-nav-item "><a href="javascript:void(0)"><i class="layui-icon">&#xe631;</i>权限管理</a></li>
+        <li class="layui-nav-item " url="./pages/qiuzhi.html"><a href="javascript:void(0)"><i class="layui-icon">&#xe63b;</i>求职联系</a></li>
+        <li class="layui-nav-item "><a href="javascript:void(0)"><i class="layui-icon">&#x1005;</i>审核模块</a></li>
+        <li class="layui-nav-item "><a href="javascript:void(0)"><i class="layui-icon">&#xe653;</i>app管理</a></li>
+      </ul>
+    </div>
+  </div>
+  
+  <div class="layui-body" style=" overflow: auto" >
+    <!-- 内容主体区域 -->
+    <div class="wrapper">
+
+    </div>
+    
+  </div>
+  
+  <div class="layui-footer">
+      
+    <!-- 底部固定区域 -->
+    <!-- © layui.com - 底部固定区域 -->
+  </div>
+</div>
+<script src="./layui/layui.js"></script>
+<script>
+//JavaScript代码区域
+layui.use('element', function(){
+  var element = layui.element;
+  
+});
+</script>
+  <!-- *****************************************************商家管理模态框************************************** -->
+<!-- 模态框 -->
+<div class="modal fade " id="SJModal">
+    <!-- 模态框 -->
+  <div class="modal-dialog modal-lg" role="document">
+      <!-- 模态框的内容 -->
+    <div class="modal-content">
+        <!-- 标题，头部 -->
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">添加商家信息</h5>
+            <button type="button" class="close" onclick="closeModal.call(this)" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+        <!-- begin -->
+        <form id="customer_form">
+          <div class="form-group row">
+            <input type="hidden" name="id" value="">
+          </div>
+          <div class="form-group row">
+            <label for="input_name" class="col-sm-2 text-right">商家名称</label>
+            <div class="col-sm-10">
+              <input id="input_name" class="form-control" type="text" name="name" placeholder="请输入商家名称"/>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="input_contactName" class="col-sm-2 text-right">联系人</label>
+            <div class="col-sm-4">
+              <input id="input_contactName" class="form-control" type="text" name="contactName" placeholder="请输入联系人"/> 
+            </div>
+             <label for="input_contactPhone" class="col-sm-2 text-right">联系方式</label>
+            <div class="col-sm-4">
+              <input id="input_contactPhone" class="form-control" type="text" name="contactPhone" placeholder="请输入联系方式"/>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="input_industry" class="col-sm-2 text-right">行业类型</label>
+            <div class="col-sm-4">
+              <input id="input_industry" class="form-control" type="text" name="industry" placeholder="请输入行业类型"/>
+            </div>
+             <label for="input_scale" class="col-sm-2 text-right">公司规模</label>
+            <div class="col-sm-4">
+              <input id="input_scale" class="form-control" type="text" name="scale" placeholder="请输入公司规模信息"/>
+            </div>
+          </div>
+        
+          <div class="form-group row">
+            <label for="input_registeredCapital" class="col-sm-2 text-right">注册资本</label>
+            <div class="col-sm-10">
+              <input id="input_registeredCapital" class="form-control" type="text" name="registeredCapital" placeholder="请输入注册资金"/>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="input_businessLicense" class="col-sm-2 text-right">营业执照</label>
+            <div class="col-sm-10">
+              <input id="input_businessLicense" class="form-control" type="text" name="businessLicense" placeholder="请选择营业执照"/>
+            </div>
+          </div>
+           <div class="form-group row">
+            <label for="input_status" class="col-sm-2 text-right">状态</label>
+            <div class="col-sm-10">
+              <input id="input_status" class="form-control" type="text" name="status" placeholder="审核通过/拒绝/待审核"/>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="input_description" class="col-sm-2 text-right">详细信息</label>
+            <div class="col-sm-10">
+              <input id="input_description" class="form-control" type="text" name="description" placeholder="请输入详细信息"/>
+            </div>
+          </div>
+        </form>
+      <!-- end -->
+      </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="closeModal.call(this)">关闭</button>
+            <button type="button" class="btn btn-primary" onclick="submitCustomer()">保存</button>
+
+        </div>
+    </div>
+  </div>
+</div>
+<!-- / Modal结束 -->  
+<!-- *****************************************************商家管理模态框结束************************************** -->
+<!-- *****************************************************招聘管理模态框************************************** -->
+<!-- 模态框 -->
+<div class="modal fade " id="ZPModal">
+    <!-- 模态框 -->
+  <div class="modal-dialog modal-lg" role="document">
+      <!-- 模态框的内容 -->
+    <div class="modal-content">
+        <!-- 标题，头部 -->
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">发布招聘</h5>
+            <button type="button" class="close" onclick="closeModal.call(this)" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+        <!-- begin -->
+        <form id="customer_form">
+          <div class="form-group row">
+            <input type="hidden" name="id" value="">
+          </div>
+          <div class="form-group row">
+            <label for="input_title" class="col-sm-2 text-right">招聘标题</label>
+            <div class="col-sm-10">
+              <input id="input_title" class="form-control" type="text" name="title" placeholder="请输入职位名称描述"/>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="input_job" class="col-sm-2 text-right">选择工种</label>
+            <div class="col-sm-4">
+              <input id="input_job" class="form-control  " type="text" name="job" placeholder="请输入工种信息"/> 
+            </div>
+            <label for="input_num" class="col-sm-2 text-right">招聘人数</label>
+            <div class="col-sm-4">
+              <input id="input_num" class="form-control " type="text" name="num" placeholder="请输入您要的招聘人数"/>
+            </div>
+          </div>
+          <div class="form-group row">
+            
+          </div>
+          <div class="form-group row">
+            <label for="input_contactName" class="col-sm-2 text-right">招聘公司</label>
+            <div class="col-sm-4">
+              <input id="input_contactName" class="form-control" type="text" name="contactName" placeholder="请填写招聘公司名称"/>
+            </div>
+            <label for="input_salary" class="col-sm-2 text-right">薪资水平</label>
+            <div class="col-sm-4">
+              <input id="input_salary" class="form-control" type="text" name="salary" placeholder="请输入薪资"/>
+            </div>
+          </div>
+          <div class="form-group row">
+          <label for="input_salary" class="col-sm-2 text-right mr-3">发布人</label>
+              <select name="" id="search_ID" class=" col-sm-3 btn btn-outline-success dropdown-toggle mr-5 " >
+                <option  style="display:none;">请选择发布人</option>
+              </select>
+          <label for="input_salary" class="col-sm-2 text-right mr-3">联系方式</label>
+              <select name="" id="search_ID" class=" col-sm-3 btn btn-outline-success dropdown-toggle " >
+                <option  style="display:none;">请选择联系方式</option>
+              </select>
+          </div>
+          <div class="form-group row">
+            <label for="input_welfare" class="col-sm-2 text-right">职位标签</label>
+            <div class="col-sm-10">
+              <input id="input_welfare" class="form-control" type="text" name="welfare" placeholder="请输入福利待遇"/>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="input_publishTime" class="col-sm-2 text-right">招聘时长</label>
+            <div class="col-sm-10">
+              <input id="input_publishTime" class="form-control" type="text" name="publishTime" placeholder="请输入招聘时间"/>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="input_description" class="col-sm-2 text-right">职位描述</label>
+            <div class="col-sm-10">
+              <input id="input_description" class="form-control" type="text" name="description" placeholder="请输入招聘时间"/>
+            </div>
+          </div>
+        </form>
+      <!-- end -->
+      </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="closeModal.call(this)">关闭</button>
+            <button type="button" class="btn btn-primary" onclick="submitCustomer()">保存</button>
+
+        </div>
+    </div>
+  </div>
+</div>
+<!-- / Modal结束 -->  
+<!-- *******************************************招聘管理模态框结束******************************** -->
+
+
+<!-- *******************************************用户管理模态框******************************** -->
+<!-- 模态框 -->
+<div class="modal fade " id="YH_Modal">
+    <!-- 模态框 -->
+  <div class="modal-dialog modal-lg" role="document">
+      <!-- 模态框的内容 -->
+    <div class="modal-content">
+        <!-- 标题，头部 -->
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">添加用户</h5>
+            <button type="button" class="close" onclick="YH_Modal.call(this)" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+        <!-- begin -->
+        <form id="customer_form">
+          <div class="form-group row">
+            <input type="hidden" name="id" value="">
+          </div>
+          <div class="form-group row">
+            <label for="input_username" class="col-sm-2 text-right">用户名</label>
+            <div class="col-sm-10">
+              <input id="input_username" class="form-control" type="text" name="username" placeholder="请输入用户名"/>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="input_telephone" class="col-sm-2 text-right">手机号</label>
+            <div class="col-sm-10">
+              <input id="input_telephone" class="form-control " type="text" name="telephone" placeholder="请输入用户名手机号"/> 
+            </div>
+          </div>
+        </form>
+      <!-- end -->
+      </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="YH_Modal.call(this)">关闭</button>
+            <button type="button" class="btn btn-primary" onclick="submitCustomer()">保存</button>
+
+        </div>
+    </div>
+  </div>
+</div>
+<!-- / Modal结束 -->  
+
+
+<!-- *******************************************用户管理模态框结束******************************** -->
+</body>
+</html>

@@ -1,0 +1,277 @@
+
+<div class="container-fluid ">
+			<br>
+			<div class="btns mb-2" style="display:inline-block;">
+				<button class="btn btn-primary" id="btn_add">添加</button>
+				<button class="btn btn-primary" id="btn_bath_del">批量删除</button>
+			</div>
+			<!-- 搜索 -->
+			<div class="ss ml-auto mr-3" style="width: 300px;margin-bottom: 10px; display:inline-block;">
+				<tr>
+					<input type="text" id="filtertext" placeholder="请输入...">
+					<input type="button" id="search" value="搜索" >
+				</tr>
+			</div>
+			<!-- 搜索结束 -->
+			<table class="table table-bordered table-sm table-hover" id="customer_tbl">
+				<thead class="text-center">
+					<tr>
+						<td width="60" >编号</td>
+						<td>姓名</td>
+						<td>密码</td>
+						<td>身份证</td>
+						<td>手机号</td>
+						<td width="150">操作</td>
+					</tr>
+				</thead>
+				<tbody> </tbody>
+			</table>
+</div>
+		<!-- 模态框 -->
+<div class="modal fade " id="customerModal">
+		<!-- 模态框 -->
+	<div class="modal-dialog " role="document">
+		  <!-- 模态框的内容 -->
+		<div class="modal-content">
+		    <!-- 标题，头部 -->
+		    <div class="modal-header">
+		        <h5 class="modal-title" id="exampleModalLabel">添加服务员信息</h5>
+		        <button type="button" class="close" onclick="closeModal.call(this)" data-dismiss="modal" aria-label="Close">
+		          <span aria-hidden="true">&times;</span>
+		        </button>
+		    </div>
+		    <div class="modal-body">
+				<!-- begin -->
+				<form id="customer_form">
+					<div class="form-group row">
+					 	<input type="hidden" name="id" value="">
+					</div>
+					<!-- 姓名 -->
+					<div class="form-group row">
+						<label for="input_realname" class="col-sm-2 text-right">姓名</label>
+					 	<div class="col-sm-10">
+					 		<input id="input_realname" class="form-control" type="text" name="realname"/>
+					 	</div>
+					</div>
+					<!-- 密码 -->
+					<div class="form-group row">
+						<label for="input_password" class="col-sm-2 text-right">密码</label>
+						<div class="col-sm-10">
+							<input id="input_password" class="form-control" type="password" name="password"/> 
+						</div>
+					</div>
+					<div class="form-group row">
+						<label for="input_idcard" class="col-sm-2 text-right">身份证</label>
+					 	<div class="col-sm-10">
+					 		<input id="input_idcard" class="form-control" type="text" name="idcard"/>
+					 	</div>
+					</div>
+					<!-- 手机号 -->
+					<div class="form-group row">
+						<label for="input_telephone" class="col-sm-2 text-right">手机号</label>
+					 	<div class="col-sm-10">
+					 		<input id="input_telephone" class="form-control" type="text" name="telephone"/>
+					 	</div>
+					</div>
+					
+				</form>
+			<!-- end -->
+			</div>
+		    <div class="modal-footer">
+		        <button type="button" class="btn btn-secondary" onclick="closeModal.call(this)">关闭</button>
+		        <button type="button" class="btn btn-primary" onclick="submitCustomer()">保存</button>
+
+		    </div>
+		</div>
+	</div>
+</div>
+<!-- / Modal结束 -->	
+
+<script>
+		var baseURL = "http://134.175.100.63:6677"
+		function closeModal(){
+			//编写代码表单重置
+			$(this).parents(".modal").modal("hide");
+			// $("#exampleModal").modal("hide");
+		}
+		// 加载数据
+		function reloadData(){
+			var url = baseURL+"/waiter/findAll"
+			$.get(url,function(result){
+				if(result.status === 200){
+					$("#customer_tbl>tbody").empty();
+					result.data.forEach(function(item){
+						$(`<tr>
+						<td class="text-center"><input type="checkbox" value="`+item.id+`"></td>
+						<td class="text-center">`+item.realname+`</td>
+						<td class="text-center">`+item.password+`</td>
+						<td class="text-center">`+item.idcard+`</td>
+						<td class="text-center">`+item.telephone+`</td>
+						<td class="text-center">
+							<a href="javascript:void(0)" class="btn btn_del btn-sm">删除</a>
+							<a href="javascript:void(0)" class="btn btn-upd btn-sm">修改</a>
+						</td>
+					</tr>`).appendTo("#customer_tbl>tbody");
+					});
+				} else {
+					alert("服务接口出错！");
+				}
+			});
+		}
+
+			
+		// 保存或更新顾客信息
+		function submitCustomer(){
+			// 1. 获取用户名手机号密码
+			var id = $("#customer_form input[name=id]").val();
+			var realname = $("#customer_form input[name=realname]").val();
+			var password = $("#customer_form input[name=password]").val();
+			var idcard = $("#customer_form input[name=idcard]").val();
+			var telephone = $("#customer_form input[name=telephone]").val();
+			// 2. 与后台交互	
+			var url = baseURL+"/waiter/saveOrUpdate"
+			var data;
+			if(id){
+				//修改
+				data = {
+					id:id,
+					realname:realname,
+					password:password,
+					idcard:idcard,
+					telephone:telephone
+				}
+			} else {
+				//添加
+				data = {
+					realname:realname,
+					password:password,
+					idcard:idcard,
+					telephone:telephone
+				}
+			} 
+			$.post(url,data,function(result){
+				if(result.status === 200){
+					$("#customerModal").modal("hide");
+					reloadData();
+					alert("保存成功")
+				} else {
+					alert("接口异常");
+				}
+			});
+			// 3. 关闭模态框，刷新列表
+		}
+
+			
+
+
+// 删除/修改功能
+			$(function(){
+				reloadData();
+
+
+				// 2. 为添加按钮绑定事件
+			$("#btn_add").click(function(){
+			$("#customerModal").modal("show");
+						}); 
+						// 3. 监听模态框的关闭
+			$('#customerModal').on('hidden.bs.modal', function (e) {
+			$(this).find("form")[0].reset();
+					})
+
+	// 为批量删除绑定事件处理函数
+		// 为批量删除绑定事件处理函数
+	$("#btn_bath_del").click(function(){
+		var ids = $("input[type=checkbox]:checked").map(function(index,item){
+			return $(item).val();
+		}).toArray();
+		var url = baseURL+"/waiter/batchDelete"
+		var data ="";
+		// var ids = [1,2,3]; => ids=1&ids=2&id=3
+		for(var index in ids){
+			var id = ids[index];
+			if(index == 0){
+				data += "ids="+id
+			} else {
+				data += "&ids="+id
+			}
+		}
+		// {id:1,name:terry} id=1&name=terry
+		// {ids:[1,2,3]}  ids[]=1&ids[]=2&ids[]=3
+		// {ids:[1,2,3]}  ids[0]=1&ids[1]=2&ids[2]=3
+		// {ids:[1,2,3]}  ids=1&ids=2&ids=3	
+		$.post(url,data,function(result){
+			if(result.status ==200){
+				alert("删除成功");
+				reloadData();
+			} else {
+				alert(result.message);
+			}
+		});
+	})
+
+		//搜索
+		$ (function(){
+			$("#search").click(function(){
+				var searchtxt = $('#filtertext').val();
+				console.log(searchtxt);
+				$("table tbody tr")
+					.hide()
+					.filter(":contains('"+searchtxt+"')")
+					.show();
+			})
+		})
+		//搜索结束
+
+		// 为删除/修改按钮绑定事件
+		$("#customer_tbl > tbody").on("click","a",function(event){
+			
+			switch(this.className){
+				case "btn btn_del btn-sm":
+					var url = baseURL+"/waiter/deleteById";
+					//获取Id
+					var id = $(this).parents("tr").find("input").val();
+					var data ="id="+id;
+					//console.log(data);
+					$.get(url,data,function(result){
+						if(result.status === 200){
+							alert(result.message);
+							reloadData();
+						}else{
+							alert(result.message);
+						}						
+					});
+					break;
+					//修改
+				case "btn btn-upd btn-sm":
+					//1、弹出模态框
+						$('#customerModal').modal('show');
+					// 2. 将当前行的信息放人模态框
+					// var id = $(this).parents("tr").find("input").val();
+					// //获取表格中姓名和手机的值
+					// var name = $(this).paerents('tr').find('nth-child(2)').text();
+					// var num = event.target.parentNode.parentNode.children[2].innerText;
+					// var parentId = event.target.parentNode.parentNode.children[3].innerText;
+					// //将表格中的名称，数量和类型的值添加到模态框中
+
+					// $("#input_username").val(name);
+					// $("#input_password").val(num);
+					// $("#input_telephone").val(parentId);
+					// break;
+					var id = $(this).parents('tr').find('input').val();
+					var realname = $(this).parents('tr').find('td:nth-child(2)').text();
+					var password = $(this).parents('tr').find('td:nth-child(3)').text();
+					var idcard = $(this).parents('tr').find('td:nth-child(4)').text();
+					var telephone = $(this).parents('tr').find('td:nth-child(5)').text();
+					console.log(realname);
+					// 将值显示到输入框中
+					$("#customer_form input[name=id]").val(id);
+					$("#customer_form input[name=realname]").val(realname);
+					$("#customer_form input[name=password]").val(password);
+					$("#customer_form input[name=idcard]").val(idcard);
+					$("#customer_form input[name=telephone]").val(telephone);
+
+					break;
+			}
+	});
+});
+</script>
